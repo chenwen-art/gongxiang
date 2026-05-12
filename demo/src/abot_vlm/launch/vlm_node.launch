@@ -1,0 +1,4 @@
+<launch>
+    <node name="identify_node" pkg="abot_vlm" type="identify_service.py" output="screen"></node>
+    <node name="llm_server" pkg="abot_vlm" type="end_serve.py" output="screen"></node>
+</launch>

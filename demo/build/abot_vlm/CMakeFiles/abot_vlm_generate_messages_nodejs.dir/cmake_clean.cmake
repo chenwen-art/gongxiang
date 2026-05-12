@@ -1,0 +1,10 @@
+file(REMOVE_RECURSE
+  "CMakeFiles/abot_vlm_generate_messages_nodejs"
+  "/home/abot/xunhang_copy/demo/devel/share/gennodejs/ros/abot_vlm/srv/LLMQuery.js"
+  "/home/abot/xunhang_copy/demo/devel/share/gennodejs/ros/abot_vlm/srv/VisionResult.js"
+)
+
+# Per-language clean rules from dependency scanning.
+foreach(lang )
+  include(CMakeFiles/abot_vlm_generate_messages_nodejs.dir/cmake_clean_${lang}.cmake OPTIONAL)
+endforeach()

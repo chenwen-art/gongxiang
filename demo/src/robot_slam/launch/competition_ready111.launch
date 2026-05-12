@@ -1,0 +1,37 @@
+<launch>
+  <arg name="map_file" default="$(find robot_slam)/maps/my_lab.yaml" />
+  <arg name="use_rviz" default="true" />
+  <arg name="wait_for_start" default="false" />
+  <arg name="auto_initial_pose" default="true" />
+  <arg name="initial_pose_x" default="0.0" />
+  <arg name="initial_pose_y" default="0.0" />
+  <arg name="initial_pose_yaw" default="0.0" />
+
+  <include file="$(find abot_bringup)/launch/robot_with_imu.launch" />
+
+  <include file="$(find robot_slam)/launch/navigation.launch">
+    <arg name="map_file" value="$(arg map_file)" />
+  </include>
+
+  <include file="$(find track_tag)/launch/usb_cam_with_calibration.launch" />
+  <include file="$(find track_tag)/launch/ar_track_camera.launch" />
+  <include file="$(find abot_vlm)/launch/vlm_node.launch" />
+
+  <node pkg="TTS_audio" type="TTS.py" name="tts_server" output="screen" required="false" />
+
+  <include file="$(find robot_slam)/launch/competition_mission.launch">
+    <arg name="wait_for_start" value="$(arg wait_for_start)" />
+    <arg name="auto_initial_pose" value="$(arg auto_initial_pose)" />
+    <arg name="initial_pose_x" value="$(arg initial_pose_x)" />
+    <arg name="initial_pose_y" value="$(arg initial_pose_y)" />
+    <arg name="initial_pose_yaw" value="$(arg initial_pose_yaw)" />
+  </include>
+
+  <group if="$(arg wait_for_start)">
+    <include file="$(find robot_slam)/launch/GameStart.launch" />
+  </group>
+
+  <group if="$(arg use_rviz)">
+    <include file="$(find robot_slam)/launch/view_nav.launch" />
+  </group>
+</launch>

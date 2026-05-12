@@ -1,0 +1,2 @@
+TTS_audio:abot_base/abot_bringup:abot_base/abot_imu:abot_base/abot_model:abot_base/lidar_filters:abot_find:abot_vlm:nav_command:ocr_detect:robot_slam:track_tag
+-DCATKIN_DEVEL_PREFIX=/home/abot/xunhang_copy/demo/devel -DCMAKE_INSTALL_PREFIX=/home/abot/xunhang_copy/demo/install -G Unix Makefiles
