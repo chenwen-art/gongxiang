@@ -28,16 +28,12 @@ DEFAULT_IMAGE_PATH = os.path.join(PACKAGE_DIR, "temp2", "vl_now.jpg")
 IMAGE_PATH = DEFAULT_IMAGE_PATH
 API_URL = "https://ark.cn-beijing.volces.com/api/v3/chat/completions"
 MODEL_NAME = "doubao-1-5-vision-pro-32k-250115"
-
-# ====================== 【修复 1：允许正确答案】 ======================
-VALID_NUMBERS = {u"31", u"32", u"33", u"40", u"41", u"42", u"49", u"50", u"51"}
+DIGIT_RESULTS = set([u"1", u"2", u"3", u"4", u"5", u"6", u"7", u"8", u"9"])
 NO_RESULT = u"无"
-
-# ====================== 【修复 2：正确提示词】 ======================
 PROMPT = (
-    u"图中有一个题目，答案是31、32、33、40、41、42、49、50、51其中一个数字。"
+    u"图中有一个计算题目，答案是1到9之间的阿拉伯数字。"
     u"请只输出这个数字，不要输出任何其他文字。"
-    u"如果没有识别到正确数字，只输出无。"
+    u"如果没有识别到1到9之间的数字，只输出无。"
 )
 
 result_pub = None
@@ -93,11 +89,11 @@ def clean_result(result_text):
     lines = [line.strip() for line in text.split(u"\n") if line.strip()]
     if lines:
         last_line = lines[-1]
-        if last_line in VALID_NUMBERS or last_line == NO_RESULT:
+        if last_line in DIGIT_RESULTS or last_line == NO_RESULT:
             return last_line
 
     for char in reversed(text):
-        if char in VALID_NUMBERS:
+        if char in DIGIT_RESULTS:
             return char
 
     return NO_RESULT
@@ -147,7 +143,7 @@ def call_vision_api(img_path, max_retry=3):
             rospy.loginfo("大模型原始返回: %s", to_utf8(result_text))
             rospy.loginfo("清理后结果: %s", to_utf8(result))
 
-            if result in VALID_NUMBERS:
+            if result in DIGIT_RESULTS:
                 return result
 
             rospy.logwarn("识别结果无效，第%d次重试", retry_count + 1)
@@ -188,7 +184,7 @@ def save_image_and_recognize(cv_image):
 def top_view_shot(image_msg):
     global recognizing, last_image
 
-    cv_image = imgmsg_to_cv2(img_msg)
+    cv_image = imgmsg_to_cv2(image_msg)
     if cv_image is not None:
         last_image = cv_image
 
@@ -232,3 +228,4 @@ if __name__ == "__main__":
         pass
     finally:
         cv2.destroyAllWindows()
+
