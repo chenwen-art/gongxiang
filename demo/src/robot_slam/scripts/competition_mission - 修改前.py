@@ -139,10 +139,7 @@ class CompetitionMission:
 
     def vlm_result_callback(self, msg):
         value = msg.data.strip()
-        # 定义合法的识别结果
-        valid_results = {31, 32, 33, 40, 41, 42, 49, 50, 51}
-        
-        if value.isdigit() and int(value) in valid_results:
+        if value.isdigit() and 1 <= int(value) <= 9:
             self.last_vlm_result = int(value)
             self.result_seq += 1
             rospy.loginfo("收到VLM识别结果: %d", self.last_vlm_result)
@@ -266,29 +263,18 @@ class CompetitionMission:
         return True
 
     def _digit_to_goal_index(self, digit):
-        # 数字到目标点索引的映射
-        # 31→索引4, 32→索引5, 33→索引6
-        # 40→索引7, 41→索引8, 42→索引9
-        # 49→索引10, 50→索引11, 51→索引12
-        digit_to_index = {
-            31: 4, 32: 5, 33: 6,
-            40: 7, 41: 8, 42: 9,
-            49: 10, 50: 11, 51: 12
-        }
-        
-        # 也支持从参数服务器读取自定义映射
         mapping = str(rospy.get_param("~digit_goal_indices", "")).replace("，", ",")
-        if mapping:
-            values = [int(item.strip()) for item in mapping.split(",") if item.strip()]
-            if len(values) != 9:
-                raise RuntimeError("digit_goal_indices 必须配置9个索引")
-            return values[[31, 32, 33, 40, 41, 42, 49, 50, 51].index(digit)]
-        
-        # 使用默认映射
-        if digit in digit_to_index:
-            return digit_to_index[digit]
-        else:
-            raise RuntimeError("未识别的数字: %d，请检查映射配置" % digit)
+        if not mapping:
+            self._check_goal_index(digit, "数字目标点")
+            return digit
+
+        values = [int(item.strip()) for item in mapping.split(",") if item.strip()]
+        if len(values) != 9:
+            raise RuntimeError("digit_goal_indices 必须配置9个索引，依次对应数字1到9")
+
+        index = values[digit - 1]
+        self._check_goal_index(index, "数字目标点")
+        return index
 
 
 if __name__ == "__main__":
