@@ -188,7 +188,7 @@ def save_image_and_recognize(cv_image):
 def top_view_shot(image_msg):
     global recognizing, last_image
 
-    cv_image = imgmsg_to_cv2(img_msg)
+    cv_image = imgmsg_to_cv2(image_msg)
     if cv_image is not None:
         last_image = cv_image
 

@@ -246,8 +246,21 @@ class CompetitionMission:
                 return False
 
             recognized_digits.append(digit)
-            self.speak("%s条线索为%d号" % (self.clue_name(order), digit))
-
+            
+            display_map = {
+                31: 1,
+                32: 2,
+                33: 3,
+                40: 4,
+                41: 5,
+                42: 6,
+                49: 7,
+                50: 8,
+                51: 9
+            }
+            display_digit = display_map.get(digit, digit)
+            self.speak("%s条线索为%d号" % (self.clue_name(order), display_digit))
+            
         if self.stop_after_recognition:
             rospy.loginfo("四个图像识别点任务完成，识别结果: %s", recognized_digits)
             self.speak("四条线索识别完成")
