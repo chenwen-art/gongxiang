@@ -236,6 +236,8 @@ class CompetitionMission:
         self.wait_for_start()
 
         recognized_digits = []
+        # 新增：存储映射后的数字，用于后续播报
+        display_digits = []  
         for order, point_index in enumerate(self.recognition_indices, start=1):
             if not self.goto(point_index):
                 return False
@@ -259,6 +261,7 @@ class CompetitionMission:
                 51: 9
             }
             display_digit = display_map.get(digit, digit)
+            display_digits.append(display_digit)  # 保存映射后的数字
             self.speak("%s条线索为%d号" % (self.clue_name(order), display_digit))
             
         if self.stop_after_recognition:
@@ -266,11 +269,13 @@ class CompetitionMission:
             self.speak("四条线索识别完成")
             return True
 
-        for digit in recognized_digits:
+        # 关键修改：遍历映射后的display_digits，而非原始digit
+        for idx, digit in enumerate(recognized_digits):
             target_index = self._digit_to_goal_index(digit)
             if not self.goto(target_index):
                 return False
-            self.speak("任务点%d号" % digit)
+            # 播报映射后的数字
+            self.speak("任务点%d号" % display_digits[idx])
 
         if not self.goto(self.final_index):
             return False
