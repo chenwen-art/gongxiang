@@ -1,15 +1,17 @@
 <launch>
-<arg name="goalListX" default="1.62, 3, 1.6, 0.40, 1.23, 1.65, 2.05, 1.23, 1.65, 2.05, 1.95, 1.60, 1.17, 3" />
-<arg name="goalListY" default="-0.2844, -1.56, -2.9737, -1.54, 2.05, -1.17, -1.17, -1.17, -1.6, -1.6, -1.6, -2.05, -2.0, -2.0" />
-<arg name="goalListYaw" default="90, 0, -90, 180, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0" />
+  <arg name="goalListX" default="1.62, 3, 1.6, 0.40, 1.23, 1.65, 2.05, 1.23, 1.65, 2.05, 1.95, 1.60, 1.17, 3" />
+  <arg name="goalListY" default="-0.2844, -1.56, -2.9737, -1.54, 2.05, -1.17, -1.17, -1.17, -1.6, -1.6, -1.6, -2.05, -2.0, -2.0" />
+  <arg name="goalListYaw" default="90, 0, -90, 180, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0" />
+  
   <arg name="recognition_indices" default="0,1,2,3" />
   <arg name="digit_goal_indices" default="4,5,6,7,8,9,10,11,12" />
   <arg name="final_index" default="13" />
+  
   <arg name="wait_for_start" default="false" />
   <arg name="stop_after_recognition" default="false" />
-  <arg name="nav_timeout" default="60.0" />
-  <arg name="vlm_timeout" default="45.0" />
-  <arg name="shoot_wait" default="0.5" />
+  
+  <arg name="nav_timeout" default="35.0" /> <arg name="vlm_timeout" default="15.0" /> <arg name="max_recognition_retries" default="2" /> <arg name="skip_on_fail" default="true" /> <arg name="shoot_wait" default="0.5" />
+  
   <arg name="auto_initial_pose" default="false" />
   <arg name="initial_pose_x" default="0.0" />
   <arg name="initial_pose_y" default="0.0" />
@@ -17,34 +19,21 @@
   <arg name="initial_pose_repeat" default="3" />
 
   <node name="competition_mission" pkg="robot_slam" type="competition_mission.py" output="screen">
-      <!--
-        只需要填你实际标定的14个点，不需要填地图里所有点。
-
-        推荐索引规则：
-          0-3   ：四个图像识别点，机器人先依次去这些点拍照
-          4-12  ：识别结果1-9对应的任务点
-                  数字1 -> 4号点，数字2 -> 5号点，...，数字9 -> 12号点
-          13    ：最后终点
-
-        每一列是一个点，goalListX/Y/Yaw 三行数量必须完全一致。
-      -->
-      <!-- index:               0,   1,   2,   3,   4,   5,   6,   7,   8,   9,   10,  11,  12,  13 -->
-      <!-- type:                R1,  R2,  R3,  R4,  D1,  D2,  D3,  D4,  D5,  D6,  D7,  D8,  D9,  END -->
       <param name="goalListX"   value="$(arg goalListX)"/>
       <param name="goalListY"   value="$(arg goalListY)"/>
       <param name="goalListYaw" value="$(arg goalListYaw)"/>
-
-      <!-- 四个图像识别点，对应上面索引0-3。 -->
       <param name="recognition_indices" value="$(arg recognition_indices)"/>
-
       <param name="digit_goal_indices" value="$(arg digit_goal_indices)"/>
-
       <param name="final_index" value="$(arg final_index)"/>
-
       <param name="wait_for_start" value="$(arg wait_for_start)"/>
       <param name="stop_after_recognition" value="$(arg stop_after_recognition)"/>
+      
       <param name="nav_timeout" value="$(arg nav_timeout)"/>
       <param name="vlm_timeout" value="$(arg vlm_timeout)"/>
+      
+      <param name="max_recognition_retries" value="$(arg max_recognition_retries)"/>
+      <param name="skip_on_fail" value="$(arg skip_on_fail)"/>
+
       <param name="shoot_wait" value="$(arg shoot_wait)"/>
       <param name="auto_initial_pose" value="$(arg auto_initial_pose)"/>
       <param name="initial_pose_x" value="$(arg initial_pose_x)"/>
