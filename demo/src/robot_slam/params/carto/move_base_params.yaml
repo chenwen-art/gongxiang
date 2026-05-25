@@ -1,16 +1,36 @@
-shutdown_costmaps: false
-
-controller_frequency: 10.0
-controller_patience: 15.0
 
 
-planner_frequency: 5.0
-planner_patience: 5.0
+#修改
+# 1. 核心频率优化
+controller_frequency: 20.0  # [改进] 从10.0提升至20.0！倍增控制指令发布频率，让机器人加速、过弯更丝滑，大幅提升反应速度
+planner_frequency: 5.0     # 全局规划频率保持 5.0 Hz 即可，避免过度消耗 CPU
 
-oscillation_timeout: 10.0
-oscillation_distance: 0.2
+# 2. 超时与容忍度优化（拒绝墨迹）
+controller_patience: 5.0    # [改进] 从15.0大幅缩短至5.0秒。如果局部规划器5秒内无法控车避障，立刻触发清障，绝不原地等待
+planner_patience: 3.0       # [改进] 从5.0缩短至3.0秒。如果全局规划器3秒内找不到去目标点的路，立刻报错或重试
 
+# 3. 震荡抑制（防止原地反复摩擦）
+oscillation_timeout: 5.0    # [改进] 从10.0缩短至5.0秒。在0.2米内晃荡5秒即视为卡死，快速介入处理
+oscillation_distance: 0.25  # [改进] 微调至0.25米，扩大震荡检测范围
+
+# 4. 插件指定
+base_global_planner: "global_planner/GlobalPlanner"
 base_local_planner: "dwa_local_planner/DWAPlannerROS"
 
-base_global_planner: "global_planner/GlobalPlanner"
+# 5. 【核心改进】自定义恢复行为（彻底解决识别不到/卡死时一直傻转圈的问题）
+recovery_behavior_enabled: true  # 允许恢复行为
+clearing_rotation_allowed: false # [核心] 直接禁用 move_base 默认的原地转圈清障！防止其大范围旋转干扰视觉和建图
+
+# 定义一套激进且利落的清除缓存行为，一旦卡住，只清理代价地图，然后由上层 Python 状态机通过超时机制接管
+recovery_behaviors:
+  - name: 'conservative_reset'
+    type: 'clear_costmap_recovery/ClearCostmapRecovery'
+  - name: 'aggressive_reset'
+    type: 'clear_costmap_recovery/ClearCostmapRecovery'
+
+# 具体的清障恢复行为参数设置
+conservative_reset:
+  reset_distance: 1.5  # 清理机器人周围1.5米以外的死区障碍物（避免雷达噪点导致误判卡死）
+aggressive_reset:
+  reset_distance: 0.0  # 彻底清理所有非静态地图上的障碍物，强制重新规划
 
