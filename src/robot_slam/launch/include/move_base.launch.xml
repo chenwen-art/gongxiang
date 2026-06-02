@@ -1,0 +1,46 @@
+<launch>
+  <arg name="model" default=""/>
+
+  <node pkg="move_base"
+        type="move_base"
+        respawn="false"
+        name="move_base"
+        output="screen">
+
+    <!-- global/local costmap common params -->
+    <rosparam file="$(find robot_slam)/params/carto/costmap_common_params.yaml"
+              command="load"
+              ns="global_costmap" />
+
+    <rosparam file="$(find robot_slam)/params/carto/costmap_common_params.yaml"
+              command="load"
+              ns="local_costmap" />
+
+    <!-- costmap specific params -->
+    <rosparam file="$(find robot_slam)/params/carto/global_costmap_params.yaml"
+              command="load" />
+
+    <rosparam file="$(find robot_slam)/params/carto/local_costmap_params.yaml"
+              command="load" />
+
+    <!-- global planner params -->
+    <rosparam file="$(find robot_slam)/params/carto/global_planner_params.yaml"
+              command="load" />
+
+    <!-- local planner params: TEB -->
+    <rosparam file="$(find robot_slam)/params/carto/teb_local_planner_params.yaml"
+              command="load" />
+
+    <!-- move_base params -->
+    <rosparam file="$(find robot_slam)/params/carto/move_base_params.yaml"
+              command="load" />
+
+    <!-- planners -->
+    <param name="base_global_planner" value="global_planner/GlobalPlanner" />
+    <param name="base_local_planner" value="teb_local_planner/TebLocalPlannerROS" />
+
+    <!-- cmd_vel 输出到底盘 -->
+    <remap from="cmd_vel" to="/cmd_vel" />
+
+  </node>
+</launch>

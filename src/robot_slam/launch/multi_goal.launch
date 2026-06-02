@@ -1,0 +1,19 @@
+<launch>
+  <node name="navigation_node" pkg="robot_slam" type="main.py" output="screen">
+
+      <!--                                0      1         2      3       4         5       6        7       8       9      10    11    12     13    14     15     16  -->
+      <param name="goalListX" value="   0.5,    1.215,   1.215,  1.02,   1.605,   1.57,    1.52,   1.995,  1.995,  1.95 ,   0.15, 1.52,  2.85,  1.6, 2.65,   0.97, 0.20"/>
+      <param name="goalListY" value="   -0.3,   1.25,    1.66,   2.00,    1.25,    1.58,     2.13,   1.10,    1.64,  2.17,   1.65, 3.05, 1.60,0.2, 1.6, -0.88,3.13"/>
+      <param name="goalListYaw" value="   0,    93,       89,    88,     93,       95,      88,     90,    94,   100 ,  185 , 90,  0,      -90,   180,  -180,  -3"/>
+
+      <!-- 自动停车程序：主程序会按识别顺序调用它 -->
+      <param name="auto_parking_launch" value="robot_slam auto_single_point_test.launch"/>
+
+      <!-- 如果视觉返回 31~39，就映射为 1~9；例如 31->1，32->2 -->
+      <param name="enable_task_id_31_to_39_mapping" value="true"/>
+
+      <!-- 保留你原来先去 goals[14] 的逻辑 -->
+      <param name="go_transition_before_tasks" value="true"/>
+
+  </node>
+</launch>

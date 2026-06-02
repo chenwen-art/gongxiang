@@ -1,0 +1,23 @@
+<launch>
+  <param name="use_sim_time" value="false" />
+
+  <!-- 地图文件 -->
+  <arg name="map_name" default="my_lab.yaml" />
+
+  <!-- 1. 加载静态地图 -->
+  <node name="map_server"
+        pkg="map_server"
+        type="map_server"
+        args="$(find robot_slam)/maps/$(arg map_name)"
+        output="screen" />
+
+  <!-- 2. AMCL 定位：发布 map -> odom -->
+  <include file="$(find robot_slam)/launch/include/amcl.launch.xml">
+    <arg name="scan_topic" value="/scan_filtered"/>
+    <arg name="use_map_topic" value="false"/>
+  </include>
+
+  <!-- 3. move_base 导航：发布 /cmd_vel -->
+  <include file="$(find robot_slam)/launch/include/move_base.launch.xml" />
+
+</launch>

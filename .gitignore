@@ -1,0 +1,64 @@
+# Catkin 编译产物
+build/
+devel/
+
+# CMake 缓存文件
+*.cmake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+CTest*
+
+# 编译生成的目标文件
+*.o
+*.so
+*.a
+*.exe
+*.dll
+*.dylib
+
+# Python 缓存
+__pycache__/
+*.pyc
+*.pyo
+
+# IDE 配置文件（避免冲突）
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# 编译生成的节点可执行文件（已在 build/ devel/ 中，额外列出来以防万一）
+bin/
+
+# 日志和测试结果
+test_results/
+*.log
+
+# 数据集、大文件（视情况，如果项目包含模型文件可调整）
+*.bag
+*.pcd
+*.ply
+*.mp3
+*.jpg
+*.png
+*.jpeg
+*.bmp
+*.tiff
+
+# 临时文件
+*.tmp
+*.temp
+temp/
+temp2/
+
+# 系统文件
+Thumbs.db
+.DS_Store
+
+# 敏感信息（比如 API_KEY.py 可能包含密钥）
+*API_KEY.py
+*.pem
+*.key
