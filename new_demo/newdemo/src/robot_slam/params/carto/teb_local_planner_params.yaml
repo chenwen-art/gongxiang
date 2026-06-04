@@ -1,142 +1,134 @@
+# ============================================================
+# TEB Local Planner 配置文件
+# 适用于全向移动底盘，小场地比赛场景
+# ============================================================
+
 TebLocalPlannerROS:
 
-  ############################################################
-  # 坐标和里程计
-  ############################################################
-
-  odom_topic: /wheel_odom
-  map_frame: map
-
-
-  ############################################################
-  # 轨迹参数
-  ############################################################
-
-  teb_autosize: true
-  dt_ref: 0.25
-  dt_hysteresis: 0.1
-
-  # 小场地里不强制覆盖路径方向，减少边走边转
-  global_plan_overwrite_orientation: false
-
-  allow_init_with_backwards_motion: true
-  max_global_plan_lookahead_dist: 1.2
-  global_plan_viapoint_sep: -1
-  global_plan_prune_distance: 0.25
-  exact_arc_length: false
-  feasibility_check_no_poses: 5
-  publish_feedback: false
+  # ==========================================================
+  # 1. 坐标和里程计设置
+  # ==========================================================
+  
+  odom_topic: /wheel_odom      # 订阅的里程计话题名称
+  map_frame: map               # 全局地图坐标系
 
 
-  ############################################################
-  # 速度限制
-  # 比之前略稳，防止贴障碍时冲得太快
-  ############################################################
-
-  max_vel_x: 0.14
-  max_vel_x_backwards: 0.08
-  max_vel_y: 0.10
-  max_vel_theta: 0.35
-
-  acc_lim_x: 0.25
-  acc_lim_y: 0.22
-  acc_lim_theta: 0.50
-
-
-  ############################################################
-  # 目标容差
-  # move_base 只负责到目标框外，不负责最终塞进框
-  ############################################################
-
-  xy_goal_tolerance: 0.10
-  yaw_goal_tolerance: 0.25
-  free_goal_vel: false
-  complete_global_plan: true
+  # ==========================================================
+  # 2. 轨迹参数
+  # ==========================================================
+  
+  teb_autosize: true                              # 自动调整轨迹点数量
+  dt_ref: 0.25                                    # 参考时间步长(秒)
+  dt_hysteresis: 0.1                              # 时间步长滞回值
+  global_plan_overwrite_orientation: false        # 不强制覆盖路径方向
+  allow_init_with_backwards_motion: true          # 允许倒退初始化
+  max_global_plan_lookahead_dist: 1.2             # 前向视野最大距离(米)
+  global_plan_viapoint_sep: -1                    # 中间点间隔(-1=自动)
+  global_plan_prune_distance: 0.25                # 已走路径修剪距离(米)
+  exact_arc_length: false                         # 是否精确弧长计算
+  feasibility_check_no_poses: 5                   # 可行性检查点数
+  publish_feedback: false                         # 是否发布反馈
 
 
-  ############################################################
-  # 全向底盘
-  ############################################################
+  # ==========================================================
+  # 3. 速度限制
+  # ==========================================================
+  
+  max_vel_x: 0.14                # 最大前进速度(米/秒)
+  max_vel_x_backwards: 0.08      # 最大后退速度(米/秒)
+  max_vel_y: 0.10                # 最大横向速度(米/秒)
+  max_vel_theta: 0.35            # 最大角速度(弧度/秒)
+  acc_lim_x: 0.25                # 前进加速度(米/秒²)
+  acc_lim_y: 0.22                # 横向加速度(米/秒²)
+  acc_lim_theta: 0.50            # 角加速度(弧度/秒²)
 
-  min_turning_radius: 0.0
-  wheelbase: 0.0
-  cmd_angle_instead_rotvel: false
 
-  weight_kinematics_nh: 0.0
-  weight_kinematics_forward_drive: 0.0
-  weight_kinematics_turning_radius: 0.0
+  # ==========================================================
+  # 4. 目标点容差
+  # ==========================================================
+  
+  xy_goal_tolerance: 0.10        # XY到达容差(米)
+  yaw_goal_tolerance: 0.25       # 角度到达容差(弧度)
+  free_goal_vel: false           # 到达后是否允许自由速度
+  complete_global_plan: true     # 是否完整执行全局路径
 
 
-  ############################################################
-  # 机器人 footprint
-  # 与 costmap_common_params.yaml 保持一致
-  ############################################################
+  # ==========================================================
+  # 5. 全向底盘设置
+  # ==========================================================
+  
+  min_turning_radius: 0.0               # 最小转弯半径(0=全向/差速)
+  wheelbase: 0.0                        # 轮距(0=全向/差速)
+  cmd_angle_instead_rotvel: false       # 是否用角度代替角速度
+  weight_kinematics_nh: 0.0             # 非全向运动学权重
+  weight_kinematics_forward_drive: 0.0  # 前进驱动约束权重
+  weight_kinematics_turning_radius: 0.0 # 转弯半径约束权重
 
+
+  # ==========================================================
+  # 6. 机器人轮廓模型
+  # ==========================================================
+  
   footprint_model:
-    type: "polygon"
+    type: "polygon"                                          # 轮廓类型
     vertices: [[0.205, 0.18], [0.205, -0.18], [-0.19, -0.18], [-0.19, 0.18]]
 
 
-  ############################################################
-  # 障碍物约束
-  # 加大障碍物距离和权重，防止前轮缝隙卡挡板
-  ############################################################
-
-  min_obstacle_dist: 0.06
-  inflation_dist: 0.12
-
-  include_costmap_obstacles: true
-  costmap_obstacles_behind_robot_dist: 0.35
-  obstacle_poses_affected: 25
+  # ==========================================================
+  # 7. 障碍物约束
+  # ==========================================================
+  
+  min_obstacle_dist: 0.06                   # 最小障碍物距离(米)
+  inflation_dist: 0.12                      # 膨胀距离(米)
+  include_costmap_obstacles: true           # 是否使用costmap障碍物
+  costmap_obstacles_behind_robot_dist: 0.35 # 后方考虑障碍物距离(米)
+  obstacle_poses_affected: 25               # 障碍物影响的轨迹点数
 
 
-  ############################################################
-  # 优化器
-  ############################################################
+  # ==========================================================
+  # 8. 优化器参数
+  # ==========================================================
+  
+  no_inner_iterations: 5        # 内层迭代次数
+  no_outer_iterations: 4        # 外层迭代次数
+  optimization_activate: true   # 是否启用优化器
+  optimization_verbose: false   # 是否输出详细优化信息
+  penalty_epsilon: 0.02         # 惩罚函数小量偏移
 
-  no_inner_iterations: 5
-  no_outer_iterations: 4
-  optimization_activate: true
-  optimization_verbose: false
+  weight_max_vel_x: 2           # 最大x速度约束权重
+  weight_max_vel_y: 2           # 最大y速度约束权重
+  weight_max_vel_theta: 5       # 最大角速度约束权重
 
-  penalty_epsilon: 0.02
+  weight_acc_lim_x: 1           # x加速度约束权重
+  weight_acc_lim_y: 1           # y加速度约束权重
+  weight_acc_lim_theta: 5       # 角加速度约束权重
 
-  weight_max_vel_x: 2
-  weight_max_vel_y: 2
-  weight_max_vel_theta: 5
+  weight_optimaltime: 1         # 时间最优权重
+  weight_shortest_path: 0       # 最短路径权重
 
-  weight_acc_lim_x: 1
-  weight_acc_lim_y: 1
-  weight_acc_lim_theta: 5
-
-  weight_optimaltime: 1
-  weight_shortest_path: 0
-
-  # 提高障碍物权重，防止贴边
-  weight_obstacle: 80
-  weight_inflation: 0.4
-  weight_viapoint: 1
-
-
-  ############################################################
-  # Homotopy
-  # 小场地先关闭多路径，避免反复换路径
-  ############################################################
-
-  enable_homotopy_class_planning: false
-  enable_multithreading: true
-  max_number_classes: 2
+  weight_obstacle: 80           # 障碍物避让权重
+  weight_dynamic_obstacle: 0    # 动态障碍物权重（设为0忽略动态障碍物）
+  weight_inflation: 0.4         # 膨胀区域权重
+  weight_viapoint: 1            # 中间点约束权重
 
 
-  ############################################################
-  # 恢复行为
-  ############################################################
+  # ==========================================================
+  # 9. Homotopy（多路径规划）
+  # ==========================================================
+  
+  enable_homotopy_class_planning: false  # 是否启用多路径规划
+  enable_multithreading: true            # 是否启用多线程
+  max_number_classes: 2                  # 最大并行路径数量
 
-  shrink_horizon_backup: true
-  shrink_horizon_min_duration: 5
 
-  oscillation_recovery: true
-  oscillation_v_eps: 0.03
-  oscillation_omega_eps: 0.08
-  oscillation_recovery_min_duration: 5
-  oscillation_filter_duration: 5
+  # ==========================================================
+  # 10. 恢复行为
+  # ==========================================================
+  
+  shrink_horizon_backup: true               # 备份时收缩规划视野
+  shrink_horizon_min_duration: 5            # 收缩视野最小持续时间(秒)
+  oscillation_recovery: true                # 是否启用振荡恢复
+  oscillation_v_eps: 0.03                   # 振荡速度阈值(米/秒)
+  oscillation_omega_eps: 0.08               # 振荡角速度阈值(弧度/秒)
+  oscillation_recovery_min_duration: 5      # 振荡恢复最小持续时间(秒)
+  oscillation_filter_duration: 5            # 振荡检测滤波时间(秒)
